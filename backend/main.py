@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import pandas as pd
 import joblib
-
+from fastapi.middleware.cors import CORSMiddleware
 # Load your trained model
 model = joblib.load('./models/car_price_predictor')
 
@@ -18,7 +18,20 @@ class CarFeatures(BaseModel):
 
 # Create FastAPI instance
 app = FastAPI(title="Car Price Prediction API", version="1.0")
-
+# Allow origins that will access your API (use ["*"] to allow all)
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:5173",
+    # Add your frontend URL(s) here
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,       # or use ["*"] to allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],         # Allow all HTTP methods (GET, POST, OPTIONS, etc)
+    allow_headers=["*"],
+)
 @app.get("/")
 def root():
     return {"message": "Car Price Prediction API is running"}
