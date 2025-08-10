@@ -88,3 +88,25 @@ data_new = pd.DataFrame({
 })
 
 print("Predicted Selling Price:", model.predict(data_new)) 
+from sklearn.metrics import mean_absolute_error
+import matplotlib.pyplot as plt
+
+# After predicting with your Linear Regression model:
+y_pred = lr.predict(X_test)
+
+# Calculate R2 score
+r2_score = metrics.r2_score(y_test, y_pred)
+print("Linear Regression R2 Score:", r2_score)
+
+# Calculate MAE
+mae_score = mean_absolute_error(y_test, y_pred)
+print("Linear Regression MAE:", mae_score)
+
+# Plot Actual vs Predicted
+plt.figure(figsize=(8,6))
+plt.scatter(y_test, y_pred, alpha=0.6, color='blue')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color='red', lw=2)  # 45-degree line
+plt.xlabel("Actual Selling Price")
+plt.ylabel("Predicted Selling Price")
+plt.title("Actual vs Predicted Selling Price")
+plt.show()
