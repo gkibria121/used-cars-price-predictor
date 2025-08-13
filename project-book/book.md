@@ -39,10 +39,10 @@ In particular:
 
 Sample data:
 
-| name                         | year | selling_price | km_driven | fuel   | seller_type | transmission | owner        | mileage    | engine  | max_power  | torque              | seats |
-| ---------------------------- | ---- | ------------- | --------- | ------ | ----------- | ------------ | ------------ | ---------- | ------- | ---------- | ------------------- | ----- |
-| Maruti Swift Dzire VDI       | 2014 | 450000        | 145500    | Diesel | Individual  | Manual       | First Owner  | 23.4 kmpl  | 1248 CC | 74 bhp     | 190Nm\@2000rpm      | 5     |
-| Skoda Rapid 1.5 TDI Ambition | 2014 | 370000        | 120000    | Diesel | Individual  | Manual       | Second Owner | 21.14 kmpl | 1498 CC | 103.52 bhp | 250Nm\@1500-2500rpm | 5     |
+| Name                     | Year | Price (₹) | KM Driven | Fuel   | Seller     | Trans  | Owner | Mileage (kmpl) | Engine (CC) | Power (BHP) | Torque (Nm)    | Seats |
+| ------------------------ | ---- | --------- | --------- | ------ | ---------- | ------ | ----- | -------------- | ----------- | ----------- | -------------- | ----- |
+| Maruti Swift Dzire VDI   | 2014 | 450,000   | 145,500   | Diesel | Individual | Manual | 1st   | 23.4           | 1248        | 74          | 190\@2000      | 5     |
+| Skoda Rapid 1.5 TDI Amb. | 2014 | 370,000   | 120,000   | Diesel | Individual | Manual | 2nd   | 21.14          | 1498        | 103.52      | 250\@1500-2500 | 5     |
 
 ---
 
