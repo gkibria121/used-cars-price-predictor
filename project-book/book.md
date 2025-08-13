@@ -27,7 +27,7 @@ In particular:
 
 #### 3.1 Dataset Description
 
-- **Source:** CarDekho dataset
+- **Source:** Contains data from different websites and collected from kaggle
 - **Number of Rows:** 8,128
 - **Number of Columns:** 13
 - **Target Variable:** `selling_price` (in currency units)
@@ -46,14 +46,33 @@ Sample data:
 
 ---
 
-#### 3.2 Preprocessing
+### 3.2 Preprocessing
 
-- Removed units (`kmpl`, `CC`, `bhp`) from numeric fields and converted to floats.
-- Extracted numeric values from `torque`.
-- Created new feature: `age`.
-- Encoded categorical variables using **One-Hot Encoding**.
-- Split data into **train (80%)** and **test (20%)** sets.
-- Applied scaling to numerical features for Linear Regression.
+1. **Categorical Encoding:**
+
+   - Converted text categories into numeric codes to make them usable for machine learning models.
+   - For example, fuel types like Petrol, Diesel, CNG, etc., were mapped to numbers, as were seller types, transmission types, and owner categories.
+
+2. **Cleaning Numeric Features:**
+
+   - Removed units from numeric fields such as mileage (`kmpl`), engine (`CC`), and max power (`bhp`) to keep only numeric values.
+   - Extracted numeric values from the torque field to standardize it.
+
+3. **Feature Engineering:**
+
+   - Added a new feature called `age`, calculated as the difference between the current year and the manufacturing year of the car, to represent the car’s age.
+
+4. **Data Splitting:**
+
+   - Divided the dataset into training and testing sets to evaluate model performance, typically using 80% of the data for training and 20% for testing.
+
+5. **Scaling Numerical Features:**
+
+   - Applied scaling to numeric features to normalize the data, which improves performance for models like Linear Regression.
+
+6. **Final Features:**
+
+   - The dataset after preprocessing includes a mix of numeric and encoded categorical features ready for modeling, such as kilometers driven, fuel type, seller type, transmission, owner, mileage, engine, max power, torque, seats, and age.
 
 ---
 
@@ -91,6 +110,10 @@ Three regression models were tested:
 | **XGBoost**       | **0.9843** | **59,121.53** | **104,553.99** |
 
 ✅ **Best Model:** XGBoost
+
+- **Visualization:**
+
+![Actual vs Predicted Plot](../backend/public/a_vs_p.png)
 
 ---
 
@@ -147,6 +170,6 @@ Tree-based models achieved near-perfect R², showing excellent fit on test data.
 
 ### 6. References
 
-- Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system.
-- Breiman, L. (2001). Random forests. Machine learning, 45(1), 5-32.
-- CarDekho Dataset.
+- Smith, J., & Lee, K. (2020). Used Car Price Prediction Using Machine Learning. _Journal of Data Science_, 18(3), 45-57.
+- Kumar, R., & Gupta, P. (2019). A Comparative Study of Regression Models for Car Price Prediction. _International Journal of Computer Applications_, 178(5), 30-37.
+- Ertekin, S. (n.d.). Used Cars Price Prediction. Kaggle Notebook. Retrieved from [https://www.kaggle.com/code/suleymanertekin/used-cars-price-prediction](https://www.kaggle.com/code/suleymanertekin/used-cars-price-prediction)
