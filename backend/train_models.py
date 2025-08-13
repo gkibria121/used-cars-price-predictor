@@ -2,156 +2,143 @@
 # IMPORTS & SETTINGS
 # ======================================
 import warnings
-warnings.filterwarnings('ignore')  # Ignore all warnings for cleaner output
+warnings.filterwarnings('ignore')
 
 import pandas as pd
-import datetime
 import seaborn as sns
+import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.ensemble import RandomForestRegressor
 from xgboost import XGBRegressor
 from sklearn import metrics
 import joblib
 
 # ======================================
-# LOAD THE DATA
+# LOAD THE NEW DATA
 # ======================================
-# Read the dataset from the local Kaggle-style folder
-data = pd.read_csv('./kaggle/input/car_data.csv')
+data = pd.read_csv('./kaggle/input/CAR_DETAILS_FROM_CAR_DEKHO.csv')
 
-# Preview the first few rows
+# Preview the data
 print(data.head())
-
-# Show the last few rows (optional)
-data.tail()
-
-# Shape of dataset
-data.shape
-print("Number of Rows", data.shape[0])
-print("Number of Columns", data.shape[1])
-
-# Info about data types and nulls
-data.info()
-
-# Count missing values in each column
-data.isnull().sum()
-
-# Summary statistics for numerical columns
-data.describe()
-
-# Preview just the first row
-data.head(1)
+print("Number of Rows:", data.shape[0])
+print("Number of Columns:", data.shape[1])
+print(data.info())
 
 # ======================================
 # FEATURE ENGINEERING
 # ======================================
-# Calculate the 'Age' of each car from the current year
-date_time = datetime.datetime.now()
-data['Age'] = date_time.year - data['Year']
+# Create Age from 'year'
+current_year = datetime.datetime.now().year
+data['age'] = current_year - data['year']
+data.drop('year', axis=1, inplace=True)
 
-# Remove the 'Year' column since it's now redundant
-data.drop('Year', axis=1, inplace=True)
-
-# ======================================
-# OUTLIER REMOVAL
-# ======================================
-# Visualize Selling Price distribution to identify outliers
-sns.boxplot(data['Selling_Price'])
-
-# Sort Selling Price in descending order to inspect large values
-sorted(data['Selling_Price'], reverse=True)
-
-# Remove extreme price outliers between 33 and 35
-data = data[~(data['Selling_Price'] >= 33.0) & (data['Selling_Price'] <= 35.0)]
+# Drop the car name (not useful for modeling unless you extract brand)
+data.drop('name', axis=1, inplace=True)
 
 # ======================================
-# ENCODING CATEGORICAL VARIABLES
+# ENCODING CATEGORICAL FEATURES
 # ======================================
-# Map Fuel_Type to numerical values
-data['Fuel_Type'] = data['Fuel_Type'].map({'Petrol': 0, 'Diesel': 1, 'CNG': 2})
+# Convert string categories into numerical labels
+data['fuel'] = data['fuel'].map({'Petrol': 0, 'Diesel': 1, 'CNG': 2, 'LPG': 3, 'Electric': 4})
+data['seller_type'] = data['seller_type'].map({'Dealer': 0, 'Individual': 1, 'Trustmark Dealer': 2})
+data['transmission'] = data['transmission'].map({'Manual': 0, 'Automatic': 1})
+data['owner'] = data['owner'].map({
+    'First Owner': 0,
+    'Second Owner': 1,
+    'Third Owner': 2,
+    'Fourth & Above Owner': 3,
+    'Test Drive Car': 4
+})
 
-# Map Seller_Type to numerical values
-data['Seller_Type'] = data['Seller_Type'].map({'Dealer': 0, 'Individual': 1})
-
-# Map Transmission to numerical values
-data['Transmission'] = data['Transmission'].map({'Manual': 0, 'Automatic': 1})
+# ======================================
+# DROP NULLS (if any)
+# ======================================
+data.dropna(inplace=True)
 
 # ======================================
 # DEFINE FEATURES AND TARGET
 # ======================================
-X = data.drop(['Car_Name', 'Selling_Price'], axis=1)  # Features
-y = data['Selling_Price']  # Target variable
+X = data.drop('selling_price', axis=1)
+y = data['selling_price']
 
 # ======================================
 # TRAIN / TEST SPLIT
 # ======================================
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.20, random_state=42
-)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # ======================================
 # MODEL TRAINING
 # ======================================
+# Linear Regression
 lr = LinearRegression()
 lr.fit(X_train, y_train)
+y_pred_lr = lr.predict(X_test)
+r2_lr = metrics.r2_score(y_test, y_pred_lr)
 
+# Random Forest
 rf = RandomForestRegressor()
 rf.fit(X_train, y_train)
+y_pred_rf = rf.predict(X_test)
+r2_rf = metrics.r2_score(y_test, y_pred_rf)
 
-xgb = GradientBoostingRegressor()
+# XGBoost
+xgb = XGBRegressor()
 xgb.fit(X_train, y_train)
-
-xg = XGBRegressor()
-xg.fit(X_train, y_train)
+y_pred_xgb = xgb.predict(X_test)
+r2_xgb = metrics.r2_score(y_test, y_pred_xgb)
 
 # ======================================
-# MODEL EVALUATION
+# RESULTS COMPARISON
 # ======================================
-y_pred1 = lr.predict(X_test)
-y_pred2 = rf.predict(X_test)
-y_pred3 = xgb.predict(X_test)
-y_pred4 = xg.predict(X_test)
+results = pd.DataFrame({
+    'Model': ['Linear Regression', 'Random Forest', 'XGBoost'],
+    'R2 Score': [r2_lr, r2_rf, r2_xgb]
+})
+print("\nModel Performance Comparison:\n")
+print(results)
 
-# Calculate R2 scores for each model
-score1 = metrics.r2_score(y_test, y_pred1)
-score2 = metrics.r2_score(y_test, y_pred2)
-score3 = metrics.r2_score(y_test, y_pred3)
-score4 = metrics.r2_score(y_test, y_pred4)
+# ======================================
+# SAVE THE BEST MODEL
+# ======================================
+# Assuming XGBoost is best
+joblib.dump(xgb, './models/car_dekho_model.pkl')
+print("\n✅ Best model (XGBoost) saved to ./models/car_dekho_model.pkl")
 
-print(score1, score2, score3, score4)
-
-# Create DataFrame to compare model performance
-final_data = pd.DataFrame({
-    'Models': ['LR', 'RF', 'GBR', 'XG'],
-    'R2_SCORE': [score1, score2, score3, score4]
+# ======================================
+# SAMPLE PREDICTION
+# ======================================
+sample = pd.DataFrame({
+    'km_driven': [70000],
+    'fuel': [0],              # Petrol
+    'seller_type': [1],       # Individual
+    'transmission': [0],      # Manual
+    'owner': [0],             # First Owner
+    'age': [2025 - 2007]      # Age = 18
 })
 
-# ======================================
-# FINAL MODEL SELECTION & SAVING
-# ======================================
-# Retrain XGBRegressor on full dataset
-xg_final = XGBRegressor().fit(X, y)
+model = joblib.load('./models/car_dekho_model.pkl')
+prediction = model.predict(sample)
+print(f"\n📈 Predicted Price: ৳{prediction[0]:,.2f}")
 
-# Save model to 'models' folder
-joblib.dump(xg_final, './models/car_price_predictor')
+import matplotlib.pyplot as plt
+from sklearn.metrics import mean_absolute_error
 
-# Load the model back from file
-model = joblib.load('./models/car_price_predictor')
+# Predict using the best model (e.g., XGBoost)
+y_pred = xgb.predict(X_test)
 
-# ======================================
-# TEST PREDICTION
-# ======================================
-# Create a sample new car data point
-data_new = pd.DataFrame({
-    'Present_Price': 5.59,
-    'Kms_Driven': 27000,
-    'Fuel_Type': 0,       # Petrol
-    'Seller_Type': 0,     # Dealer
-    'Transmission': 0,    # Manual
-    'Owner': 0,
-    'Age': 8
-}, index=[0])
+# Calculate MAE
+mae = mean_absolute_error(y_test, y_pred)
+print(f"Mean Absolute Error (MAE): ৳{mae:,.2f}")
 
-# Predict price for new car
-print(model.predict(data_new))
+# Plot Actual vs Predicted
+plt.figure(figsize=(8, 6))
+plt.scatter(y_test, y_pred, color='blue', edgecolors='k', alpha=0.6, label='Predicted vs Actual')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color='red', linewidth=2, linestyle='--', label='Ideal Prediction')
+plt.title(f'Actual vs Predicted Selling Price\nMAE = ৳{mae:,.2f}')
+plt.xlabel('Actual Selling Price')
+plt.ylabel('Predicted Selling Price')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()

@@ -6,3 +6,4 @@ pydantic==2.11.7
 scikit-learn       
 uvicorn==0.35.0
 xgboost==3.0.3
+seaborn
