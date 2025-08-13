@@ -4,16 +4,20 @@ import { Car, Gauge, Calendar, User, Settings, Fuel } from "lucide-react";
 
 const App = () => {
   const [formData, setFormData] = useState({
-    Present_Price: "",
-    Kms_Driven: "",
-    Fuel_Type: 0,
-    Seller_Type: 0,
-    Transmission: 0,
-    Owner: 0,
-    Age: "",
+    km_driven: "",
+    fuel: 0,
+    seller_type: 0,
+    transmission: 0,
+    owner: "",
+    mileage: "",
+    engine: "",
+    max_power: "",
+    torque: "",
+    seats: "",
+    age: "",
   });
 
-  const [prediction, setPrediction] = useState<number[] | number | null>(null);
+  const [prediction, setPrediction] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -39,12 +43,7 @@ const App = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        name === "Present_Price" || name === "Kms_Driven" || name === "Age"
-          ? value === ""
-            ? ""
-            : parseFloat(value)
-          : parseInt(value),
+      [name]: value === "" ? "" : parseFloat(value),
     }));
   };
 
@@ -67,7 +66,7 @@ const App = () => {
       }
 
       const result = await response.json();
-      setPrediction(result);
+      setPrediction(result.predicted_price || result); // adjust based on API
     } catch (err) {
       setError("Error getting prediction. Please check if the API is running.");
       console.error("Error:", err);
@@ -104,24 +103,6 @@ const App = () => {
             </h2>
 
             <div className="space-y-6">
-              {/* Present Price */}
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                  <div className="text-[30px] mr-2 text-green-600">&#2547;</div>
-                  Present Price (Lakhs)
-                </label>
-                <input
-                  type="number"
-                  name="Present_Price"
-                  value={formData.Present_Price}
-                  onChange={handleInputChange}
-                  step="0.01"
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  placeholder="e.g., 5.59"
-                />
-              </div>
-
               {/* Kilometers Driven */}
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
@@ -130,12 +111,12 @@ const App = () => {
                 </label>
                 <input
                   type="number"
-                  name="Kms_Driven"
-                  value={formData.Kms_Driven}
+                  name="km_driven"
+                  value={formData.km_driven}
                   onChange={handleInputChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  placeholder="e.g., 27000"
+                  placeholder="e.g., 70000"
                 />
               </div>
 
@@ -147,12 +128,12 @@ const App = () => {
                 </label>
                 <input
                   type="number"
-                  name="Age"
-                  value={formData.Age}
+                  name="age"
+                  value={formData.age}
                   onChange={handleInputChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  placeholder="e.g., 8"
+                  placeholder="e.g., 10"
                 />
               </div>
 
@@ -163,8 +144,8 @@ const App = () => {
                   Fuel Type
                 </label>
                 <select
-                  name="Fuel_Type"
-                  value={formData.Fuel_Type}
+                  name="fuel"
+                  value={formData.fuel}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 >
@@ -183,8 +164,8 @@ const App = () => {
                   Seller Type
                 </label>
                 <select
-                  name="Seller_Type"
-                  value={formData.Seller_Type}
+                  name="seller_type"
+                  value={formData.seller_type}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 >
@@ -203,8 +184,8 @@ const App = () => {
                   Transmission
                 </label>
                 <select
-                  name="Transmission"
-                  value={formData.Transmission}
+                  name="transmission"
+                  value={formData.transmission}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 >
@@ -223,13 +204,93 @@ const App = () => {
                 </label>
                 <input
                   type="number"
-                  name="Owner"
-                  value={formData.Owner}
+                  name="owner"
+                  value={formData.owner}
                   onChange={handleInputChange}
                   min="0"
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   placeholder="e.g., 0"
+                />
+              </div>
+
+              {/* Mileage */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Mileage (kmpl)
+                </label>
+                <input
+                  type="number"
+                  name="mileage"
+                  value={formData.mileage}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  placeholder="e.g., 20"
+                />
+              </div>
+
+              {/* Engine */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Engine (CC)
+                </label>
+                <input
+                  type="number"
+                  name="engine"
+                  value={formData.engine}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  placeholder="e.g., 1197"
+                />
+              </div>
+
+              {/* Max Power */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Max Power (BHP)
+                </label>
+                <input
+                  type="number"
+                  name="max_power"
+                  value={formData.max_power}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  placeholder="e.g., 82"
+                />
+              </div>
+
+              {/* Torque */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Torque (Nm)
+                </label>
+                <input
+                  type="number"
+                  name="torque"
+                  value={formData.torque}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  placeholder="e.g., 113"
+                />
+              </div>
+
+              {/* Seats */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Seats
+                </label>
+                <input
+                  type="number"
+                  name="seats"
+                  value={formData.seats}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  placeholder="e.g., 5"
                 />
               </div>
 
@@ -269,7 +330,7 @@ const App = () => {
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
                 <div className="text-center">
                   <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                    <div className="flex justify-center items-center text-[30px]  text-green-600 text-white">
+                    <div className="flex justify-center items-center text-[30px] text-white">
                       &#2547;
                     </div>
                   </div>
@@ -277,11 +338,7 @@ const App = () => {
                     Estimated Price
                   </h3>
                   <div className="text-4xl font-bold text-green-600 mb-2">
-                    &#2547;
-                    {typeof prediction === "object"
-                      ? Object.values(prediction)[0]?.toFixed(2)
-                      : prediction?.toFixed(2)}{" "}
-                    Lakhs
+                    &#2547; {prediction.toFixed(2)} Lakhs
                   </div>
                   <p className="text-sm text-gray-600">
                     Based on current market trends and vehicle specifications
@@ -296,62 +353,6 @@ const App = () => {
                 </p>
               </div>
             )}
-
-            {/* Info Cards */}
-            <div className="mt-8 grid grid-cols-2 gap-4">
-              <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-100">
-                <div className="text-blue-600 font-semibold text-sm">
-                  AI Powered
-                </div>
-                <div className="text-xs text-blue-500 mt-1">
-                  Machine Learning Model
-                </div>
-              </div>
-              <div className="bg-purple-50 rounded-lg p-4 text-center border border-purple-100">
-                <div className="text-purple-600 font-semibold text-sm">
-                  Instant Results
-                </div>
-                <div className="text-xs text-purple-500 mt-1">
-                  Real-time Prediction
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Features */}
-        <div className="mt-12 grid md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl p-6 shadow-lg text-center border border-gray-100">
-            <div className="bg-blue-100 rounded-full p-3 w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-              <Car className="w-6 h-6 text-blue-600" />
-            </div>
-            <h3 className="font-semibold text-gray-800 mb-2">
-              Accurate Predictions
-            </h3>
-            <p className="text-sm text-gray-600">
-              Advanced ML algorithms analyze multiple factors for precise
-              pricing
-            </p>
-          </div>
-          <div className="bg-white rounded-xl p-6 shadow-lg text-center border border-gray-100">
-            <div className="bg-green-100 rounded-full p-3 w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-              <div className="text-[30px]  flex justify-center items-center text-green-600">
-                &#2547;
-              </div>
-            </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Market Based</h3>
-            <p className="text-sm text-gray-600">
-              Prices reflect current market conditions and trends
-            </p>
-          </div>
-          <div className="bg-white rounded-xl p-6 shadow-lg text-center border border-gray-100">
-            <div className="bg-purple-100 rounded-full p-3 w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-              <Gauge className="w-6 h-6 text-purple-600" />
-            </div>
-            <h3 className="font-semibold text-gray-800 mb-2">Fast & Easy</h3>
-            <p className="text-sm text-gray-600">
-              Get instant estimates with just a few clicks
-            </p>
           </div>
         </div>
       </div>

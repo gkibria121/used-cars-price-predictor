@@ -4,32 +4,33 @@ import pandas as pd
 import joblib
 from fastapi.middleware.cors import CORSMiddleware
 # Load your trained model
-model = joblib.load('./models/car_price_predictor')
+model = joblib.load('./models/Car_details_v3.pkl')
 
 # Define request body model
 class CarFeatures(BaseModel):
-    Present_Price: float
-    Kms_Driven: float
-    Fuel_Type: float
-    Seller_Type: float
-    Transmission: float
-    Owner: float
-    Age: float
-
+    km_driven: float
+    fuel: float
+    seller_type: float
+    transmission: float
+    owner: float
+    mileage: float
+    engine: float
+    max_power: float
+    torque: float
+    seats: float
+    age: float             
 # Create FastAPI instance
-app = FastAPI(title="Car Price Prediction API", version="1.0")
-# Allow origins that will access your API (use ["*"] to allow all)
+app = FastAPI(title="Car Price Prediction API", version="1.0") 
 origins = [
     "http://localhost",
     "http://localhost:3000",
-    "http://localhost:5173",
-    # Add your frontend URL(s) here
+    "http://localhost:5173", 
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,       # or use ["*"] to allow all origins
+    allow_origins=origins,        
     allow_credentials=True,
-    allow_methods=["*"],         # Allow all HTTP methods (GET, POST, OPTIONS, etc)
+    allow_methods=["*"],         
     allow_headers=["*"],
 )
 @app.get("/")
@@ -38,7 +39,7 @@ def root():
 
 @app.post("/predict")
 def predict(features: CarFeatures):
-    # Convert request to DataFrame
+ 
     data_new = pd.DataFrame([features.dict()])
 
     # Make prediction
@@ -46,5 +47,5 @@ def predict(features: CarFeatures):
 
     return {
         "predicted_price": round(float(prediction), 2),
-        "currency": "Lakhs"
+        "currency": "BDT"
     }

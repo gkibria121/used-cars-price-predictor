@@ -1,158 +1,152 @@
-# Predicting Used Car Prices with Machine Learning
+### 1. Introduction
 
-## 1. Introduction
+The goal of this project is to **predict the selling price of used cars** based on their attributes such as manufacturing year, mileage, engine capacity, fuel type, and ownership details.
+This prediction can help car buyers and sellers make data-driven decisions and avoid underpricing or overpricing vehicles.
 
-### Research Question
-How accurately can we predict the resale price of used cars using machine learning algorithms trained on real-world listings?
+**Motivation:**
+The used car market is growing rapidly, and price transparency is often lacking. Accurate predictions can assist dealerships, online marketplaces, and individual sellers in pricing strategies.
 
-### Motivation
-Determining a fair price for a used car is difficult due to differences in condition, features, and market dynamics. A machine learning model can bring transparency and help both buyers and sellers make informed decisions.
-
-### Background and Context
-The used car market has exploded with online listings, creating an opportunity for predictive analytics. Prior work has used regression models to automate pricing, but performance varies with features used and modeling techniques.
-
-### Hypothesis
-- **Negative correlation** expected between age/km driven and price.
-- Features like **transmission**, **fuel type**, and **ownership history** are expected to influence price significantly.
+**Hypothesis:**
+Vehicle attributes such as **age, fuel type, transmission type, engine capacity, and mileage** significantly influence the selling price.
 
 ---
 
-## 2. Related Work
+### 2. Related Work
 
-Previous studies, such as Smith et al. (2020) and Kumar & Gupta (2019), have applied regression models to predict used car prices. Linear Regression is often used as a baseline due to its simplicity and interpretability. However, non-linear models like Random Forests and XGBoost have shown better performance on complex datasets.
+Previous research on car price prediction often uses regression models such as **Linear Regression**, **Ridge/Lasso Regression**, **Random Forest**, and **Gradient Boosting**.
+Studies show that tree-based ensemble methods generally outperform simple linear models when dealing with mixed categorical and numerical features.
 
----
+In particular:
 
-## 3. Methodology
-
-### 3.1 Dataset Description
-
-- **Source**: Kaggle Dataset - *CAR_DETAILS_FROM_CAR_DEKHO.csv*
-- **Total Records**: 4,340 rows
-- **Variables**:
-
-| Feature        | Description                         | Type        |
-|----------------|-------------------------------------|-------------|
-| `name`         | Car make and model (Dropped)        | Categorical |
-| `year`         | Year of manufacture (Used to derive `age`) | Numerical |
-| `km_driven`    | Kilometers driven                   | Numerical   |
-| `fuel`         | Type of fuel                        | Categorical |
-| `seller_type`  | Seller category                     | Categorical |
-| `transmission` | Manual or Automatic                 | Categorical |
-| `owner`        | Ownership history                   | Categorical |
-| `selling_price`| Car resale price (Target)           | Numerical   |
-
-**Sample Record:**
-```plaintext
-name: Maruti 800 AC
-year: 2007
-km_driven: 70000
-fuel: Petrol
-seller_type: Individual
-transmission: Manual
-owner: First Owner
-selling_price: ৳60,000
-````
-
-### 3.2 Preprocessing
-
-* **Missing Values**: None detected
-* **Feature Engineering**:
-
-  * Created `age` = Current Year - `year`
-  * Dropped `name` and `year`
-* **Encoding**:
-
-  * `fuel`: Petrol=0, Diesel=1, CNG=2, LPG=3, Electric=4
-  * `seller_type`: Dealer=0, Individual=1, Trustmark Dealer=2
-  * `transmission`: Manual=0, Automatic=1
-  * `owner`: First Owner=0, Second Owner=1, Third Owner=2, Fourth & Above Owner=3, Test Drive Car=4
-* **Train/Test Split**: 80% Train, 20% Test (random\_state=42)
-* **Scaling**: Not applied (tree-based models don’t require scaling)
-
-### 3.3 Model Specification
-
-We trained the following models:
-
-* **Linear Regression**
-* **Random Forest Regressor**
-* **XGBoost Regressor**
-
-#### Linear Regression Equation:
-
-$$
-\hat{y} = \beta_0 + \beta_1 \cdot \text{Present Price} + \beta_2 \cdot \text{Kms Driven} + \dots + \beta_n \cdot \text{Age}
-$$
-
-**Assumptions**:
-
-* Linearity
-* Independence of errors
-* Homoscedasticity
-* Normality of residuals
+- Random Forest and XGBoost have been shown to handle **non-linear relationships** and **interaction effects** well.
+- Linear Regression, while interpretable, may underperform in complex, high-dimensional datasets unless feature engineering is extensive.
 
 ---
 
-## 4. Results and Discussion
+### 3. Methodology
 
-### 4.1 Model Fitting
+#### 3.1 Dataset Description
 
-| Model             | R² Score  |
-| ----------------- | --------- |
-| Linear Regression | 0.381     |
-| Random Forest     | 0.495     |
-| **XGBoost**       | **0.499** |
+- **Source:** CarDekho dataset
+- **Number of Rows:** 8,128
+- **Number of Columns:** 13
+- **Target Variable:** `selling_price` (in currency units)
+- **Features:**
 
-> Best Model: **XGBoost Regressor**
+  - Numerical: `year`, `km_driven`, `mileage` (converted to numeric), `engine` (in CC), `max_power` (in bhp), `torque` (numeric component), `seats`
+  - Categorical: `fuel`, `seller_type`, `transmission`, `owner`
+  - Derived: `age = current_year - year`
 
-### 4.2 Interpretation of Results
+Sample data:
 
-* **Age** has a negative coefficient → older cars lose value
-* **Transmission** and **fuel type** influence resale prices
-* Intercept represents the expected base price (though not directly interpretable due to categorical encodings)
-
-**Note**: Coefficient significance (p-values) was not tested.
-
-### 4.3 Validation Metrics
-
-For best model (XGBoost):
-
-* **R² Score**: 0.499
-* **MAE**: 1.65 lakhs
-* **RMSE**: Not reported (can be added)
-
-> Future versions should include full residual analysis and metrics like RMSE  for completeness.
+| name                         | year | selling_price | km_driven | fuel   | seller_type | transmission | owner        | mileage    | engine  | max_power  | torque              | seats |
+| ---------------------------- | ---- | ------------- | --------- | ------ | ----------- | ------------ | ------------ | ---------- | ------- | ---------- | ------------------- | ----- |
+| Maruti Swift Dzire VDI       | 2014 | 450000        | 145500    | Diesel | Individual  | Manual       | First Owner  | 23.4 kmpl  | 1248 CC | 74 bhp     | 190Nm\@2000rpm      | 5     |
+| Skoda Rapid 1.5 TDI Ambition | 2014 | 370000        | 120000    | Diesel | Individual  | Manual       | Second Owner | 21.14 kmpl | 1498 CC | 103.52 bhp | 250Nm\@1500-2500rpm | 5     |
 
 ---
 
-## 5. Conclusion and Future Work
+#### 3.2 Preprocessing
 
-### Summary of Findings
-
-* XGBoost gave the best performance (R² ≈ 0.50)
-* Age and km driven negatively impact price
-* Tree-based models outperform Linear Regression on this dataset
-
-### Limitations
-
-* No hyperparameter tuning was applied
-* No cross-validation performed
-* Important variables like **brand**, **region**, and **car condition** are not used
-
-### Future Work
-
-* Add more features (brand, accident history, city)
-* Apply hyperparameter tuning (GridSearchCV)
-* Evaluate with cross-validation
-* Explore SHAP values for model explainability
-* Try deep learning models for richer feature interactions
+- Removed units (`kmpl`, `CC`, `bhp`) from numeric fields and converted to floats.
+- Extracted numeric values from `torque`.
+- Created new feature: `age`.
+- Encoded categorical variables using **One-Hot Encoding**.
+- Split data into **train (80%)** and **test (20%)** sets.
+- Applied scaling to numerical features for Linear Regression.
 
 ---
 
-## 6. References
+#### 3.3 Model Specification
 
-* Smith, J., & Lee, K. (2020). *Used Car Price Prediction Using Machine Learning*. *Journal of Data Science*.
-* Kumar, R., & Gupta, P. (2019). *A Comparative Study of Regression Models for Car Price Prediction*. *IJCA*.
-* Kaggle Dataset: [CAR\_DETAILS\_FROM\_CAR\_DEKHO.csv](https://www.kaggle.com/code/suleymanertekin/used-cars-price-prediction/)
+Three regression models were tested:
 
- 
+1. **Linear Regression**
+
+   - Assumes linear relationship between predictors and target.
+   - Model:
+
+     $$
+     \hat{y} = \beta_0 + \sum_{i=1}^n \beta_i x_i
+     $$
+
+2. **Random Forest Regressor**
+
+   - Ensemble of decision trees using bootstrap aggregation.
+
+3. **XGBoost Regressor**
+
+   - Gradient boosting algorithm optimized for speed and accuracy.
+
+---
+
+### 4. Results and Discussion
+
+#### 4.1 Model Performance (Test Data)
+
+| Model             | R²         | MAE           | RMSE           |
+| ----------------- | ---------- | ------------- | -------------- |
+| Linear Regression | 0.6951     | 268,910.32    | 460,435.98     |
+| Random Forest     | 0.9831     | 61,535.16     | 108,531.81     |
+| **XGBoost**       | **0.9843** | **59,121.53** | **104,553.99** |
+
+✅ **Best Model:** XGBoost
+
+---
+
+#### 4.2 Linear Regression Coefficients (Sorted by |coef|)
+
+| Feature      | Coefficient |
+| ------------ | ----------- |
+| transmission | 474,963.95  |
+| seller_type  | -207,162.69 |
+| fuel         | 53,182.15   |
+| seats        | -35,009.73  |
+| age          | -34,086.43  |
+| max_power    | 12,037.14   |
+| mileage      | 9,953.58    |
+| owner        | -685.25     |
+| torque       | 183.93      |
+| engine       | 91.99       |
+| km_driven    | -1.46       |
+
+---
+
+#### 4.3 Interpretation
+
+- **Transmission** type has the largest positive effect, suggesting that automatic/manual differences significantly impact prices.
+- **Seller type** being "Dealer" or "Individual" influences prices strongly (negative coefficient for some categories).
+- **Age** and **seats** have a negative impact, as older or higher-seating cars tend to be cheaper.
+
+---
+
+#### 4.4 Validation
+
+Metrics Used:
+
+- **R²**: Goodness of fit.
+- **MAE**: Average error magnitude.
+- **RMSE**: Penalizes larger errors.
+
+Tree-based models achieved near-perfect R², showing excellent fit on test data.
+
+---
+
+### 5. Conclusion and Future Work
+
+- **Key Findings:** XGBoost achieved the best performance (R² = 0.9843, RMSE ≈ 104.55K).
+- Hypothesis supported: Features like transmission, seller type, and vehicle age strongly affect selling price.
+- **Limitations:** Dataset is limited to CarDekho data; may not generalize to other regions/markets.
+- **Future Work:**
+
+  - Test additional algorithms (LightGBM, CatBoost).
+  - Perform hyperparameter tuning for XGBoost.
+  - Include additional features like accident history, service records.
+
+---
+
+### 6. References
+
+- Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system.
+- Breiman, L. (2001). Random forests. Machine learning, 45(1), 5-32.
+- CarDekho Dataset.
