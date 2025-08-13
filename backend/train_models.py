@@ -129,13 +129,13 @@ y_pred = xgb.predict(X_test)
 
 # Calculate MAE
 mae = mean_absolute_error(y_test, y_pred)
-print(f"Mean Absolute Error (MAE): ৳{mae:,.2f}")
+print(f"Mean Absolute Error (MAE): ৳ {mae:,.2f}")
 
 # Plot Actual vs Predicted
 plt.figure(figsize=(8, 6))
 plt.scatter(y_test, y_pred, color='blue', edgecolors='k', alpha=0.6, label='Predicted vs Actual')
 plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color='red', linewidth=2, linestyle='--', label='Ideal Prediction')
-plt.title(f'Actual vs Predicted Selling Price\nMAE = ৳{mae:,.2f}')
+plt.title(f'Actual vs Predicted Selling Price\nMAE = ৳ {mae:,.2f}')
 plt.xlabel('Actual Selling Price')
 plt.ylabel('Predicted Selling Price')
 plt.legend()
