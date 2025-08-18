@@ -61,9 +61,10 @@ const App = () => {
   const handleSubmit = async () => {
     setLoading(true);
     setError("");
-
+    const apiUrl = import.meta.env.VITE_API_URL;
+    console.log("API URL:", apiUrl);
     try {
-      const response = await fetch("http://127.0.0.1:8000/predict", {
+      const response = await fetch(`${apiUrl}/predict`, {
         method: "POST",
         headers: {
           accept: "application/json",
