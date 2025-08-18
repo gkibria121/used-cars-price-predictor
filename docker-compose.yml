@@ -6,7 +6,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
+      - ./backend/train_models.py:/app/train_models.py
+      - ./backend/main.py:/app/main.py
     depends_on:
       - frontend
 
