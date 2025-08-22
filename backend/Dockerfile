@@ -31,5 +31,4 @@ RUN python train_models.py
 # Expose the port FastAPI will run on
 EXPOSE 8000
 
-# Debug: keep the container alive
-CMD ["tail", "-f", "/dev/null"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
