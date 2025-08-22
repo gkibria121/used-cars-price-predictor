@@ -6,7 +6,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app # mount whole backend dir
+      - ./backend:/app:Z # mount whole backend dir
       - models_data:/app/models # separate volume for models
     depends_on:
       - frontend
