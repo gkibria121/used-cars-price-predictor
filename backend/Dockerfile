@@ -2,8 +2,9 @@ FROM python:3.13-alpine
 
 WORKDIR /app
 
-# Install build tools and dependencies
-RUN apk add --no-cache gcc g++ musl-dev libffi-dev python3-dev
+# Install build tools
+RUN apk add --no-cache \
+    gcc g++ musl-dev cmake python3-dev libexecinfo-dev
 
 COPY requirements.txt .
 
@@ -11,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 RUN mkdir models
 
-COPY  . .
+COPY --chown=root:root . .
 
 RUN python train_models.py
 
