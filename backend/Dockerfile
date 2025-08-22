@@ -12,9 +12,12 @@ RUN mkdir models
 
 # Copy the rest of the application code
 COPY . .
+
+# Run model training (creates models/*.pkl)
 RUN python train_models.py
+
 # Expose the port FastAPI will run on
 EXPOSE 8000
-RUN pwd
-# Command to run the FastAPI app with Uvicorn
+
+# Debug: keep the container alive
 CMD ["tail", "-f", "/dev/null"]
