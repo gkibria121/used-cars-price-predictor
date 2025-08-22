@@ -1,20 +1,35 @@
-FROM python:3.13-alpine
+# Use official Ubuntu as base
+FROM ubuntu:24.04
 
+# Set non-interactive mode for apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Python, pip, and build tools
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    python3.13 python3-pip python3-venv \
+    build-essential cmake git wget curl \
+    libblas-dev liblapack-dev gfortran \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /app
 
-# Install build tools
-RUN apk add --no-cache \
-    gcc g++ musl-dev cmake python3-dev libexecinfo-dev
-
+# Copy requirements and install Python packages
 COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
-
+# Create models directory
 RUN mkdir models
 
-COPY --chown=root:root . .
+# Copy app source code
+COPY  . .
 
-RUN python train_models.py
+# Run model training
+RUN python3 train_models.py
 
+# Expose FastAPI port
 EXPOSE 8000
+
+# Start FastAPI server
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
