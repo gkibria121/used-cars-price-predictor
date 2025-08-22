@@ -6,8 +6,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/train_models.py:/app/train_models.py
-      - ./backend/main.py:/app/main.py
+      - ./backend:/app # mount whole backend dir
+      - models_data:/app/models # separate volume for models
     depends_on:
       - frontend
 
@@ -17,3 +17,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+volumes:
+  models_data:

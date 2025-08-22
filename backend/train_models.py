@@ -168,8 +168,8 @@ best_name = best_row['Model']
 best_model = models[best_name]
 
 os.makedirs('./models', exist_ok=True)
-joblib.dump(best_model, './models/Car_details_v3.pkl')
-print(f"\n✅ Best model: {best_name} saved to ./models/Car_details_v3.pkl (R2 = {best_row['R2']:.4f})")
+joblib.dump(best_model, './models/car_details_v3.pkl')
+print(f"\n✅ Best model: {best_name} saved to ./models/car_details_v3.pkl (R2 = {best_row['R2']:.4f})")
 
 # ======================================
 # LINEAR COEFFICIENTS TABLE
@@ -200,7 +200,7 @@ sample = pd.DataFrame({
     'seats': [5],
     'age': [current_year - 2015]
 })
-loaded = joblib.load('./models/Car_details_v3.pkl')
+loaded = joblib.load('./models/car_details_v3.pkl')
 pred = loaded.predict(sample)
 print(f"\n📈 Predicted Price (sample): ৳{pred[0]:,.2f}")
 

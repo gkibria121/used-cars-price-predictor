@@ -4,7 +4,7 @@ import pandas as pd
 import joblib
 from fastapi.middleware.cors import CORSMiddleware
 # Load your trained model
-model = joblib.load('./models/Car_details_v3.pkl')
+model = joblib.load('./models/car_details_v3.pkl')
 
 # Define request body model
 class CarFeatures(BaseModel):
