@@ -1,24 +1,27 @@
-FROM ubuntu:24.04
+# Use official Python image as base
+FROM python:3.13-slim
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y software-properties-common \
-    && add-apt-repository ppa:deadsnakes/ppa \
-    && apt-get update \
-    && apt-get install -y python3.13 python3.13-venv python3.13-dev python3.13-distutils python3-pip \
-    build-essential cmake git wget curl libblas-dev liblapack-dev gfortran \
-    && rm -rf /var/lib/apt/lists/*
-
+# Set working directory inside the container
 WORKDIR /app
 
+# Copy requirements file and install dependencies
 COPY requirements.txt .
-RUN python3.13 -m pip install --upgrade pip
-RUN python3.13 -m pip install --no-cache-dir -r requirements.txt
 
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Create models directory
 RUN mkdir models
-COPY --chown=root:root . .
 
-RUN python3.13 train_models.py
+# Copy the rest of the application code
+COPY . .
 
+# Run model training (creates models/*.pkl)
+RUN python train_models.py
+
+# Expose the port FastAPI will run on
 EXPOSE 8000
+
+# Debug: keep the container alive 
+
+# Run FastAPI app
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
