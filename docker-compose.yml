@@ -7,7 +7,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app:Z # mount whole backend dir
-      - models_data:/app/models # separate volume for models
+      - models_data:/app/models:Z # separate volume for models
     depends_on:
       - frontend
   frontend:
