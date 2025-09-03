@@ -14,7 +14,7 @@ services:
       - traefik-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.usedcars-backend.rule=Host(`api.used-cars-price.gkibria121.com`)"
+      - "traefik.http.routers.usedcars-backend.rule=Host(`api-used-cars-price.gkibria121.com`)"
       - "traefik.http.routers.usedcars-backend.entrypoints=web"
       - "traefik.http.services.usedcars-backend.loadbalancer.server.port=8000"
 
