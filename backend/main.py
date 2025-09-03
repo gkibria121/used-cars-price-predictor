@@ -25,7 +25,7 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "http://localhost:5173", 
-    "https://used-cars-price-predictor.gkibria121.com"
+    "https://used-cars-price.gkibria121.com"
 ]
 app.add_middleware(
     CORSMiddleware,
