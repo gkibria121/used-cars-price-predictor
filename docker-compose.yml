@@ -14,9 +14,9 @@ services:
       - traefik-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`api.used-cars-price.gkibria121.com`)"
-      - "traefik.http.routers.frontend.entrypoints=web"
-      - "traefik.http.services.frontend.loadbalancer.server.port=8000"
+      - "traefik.http.routers.usedcars-backend.rule=Host(`api.used-cars-price.gkibria121.com`)"
+      - "traefik.http.routers.usedcars-backend.entrypoints=web"
+      - "traefik.http.services.usedcars-backend.loadbalancer.server.port=8000"
 
   frontend:
     build:
@@ -26,9 +26,10 @@ services:
       - traefik-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`used-cars-price.gkibria121.com`)"
-      - "traefik.http.routers.frontend.entrypoints=web"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+      - "traefik.http.routers.usedcars-frontend.rule=Host(`used-cars-price.gkibria121.com`)"
+      - "traefik.http.routers.usedcars-frontend.entrypoints=web"
+      - "traefik.http.services.usedcars-frontend.loadbalancer.server.port=3000"
+
 volumes:
   models_data:
 
