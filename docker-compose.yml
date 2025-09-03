@@ -6,15 +6,32 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app:Z # mount whole backend dir
-      - models_data:/app/models:Z # separate volume for models
+      - ./backend:/app
+      - models_data:/app/models
     depends_on:
       - frontend
+    networks:
+      - traefik-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`api.used-cars-price.gkibria121.com`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.frontend.loadbalancer.server.port=8000"
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
+    networks:
+      - traefik-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`used-cars-price.gkibria121.com`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
 volumes:
   models_data:
+
+networks:
+  traefik-network:
+    external: true

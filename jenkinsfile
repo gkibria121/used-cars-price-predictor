@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Project') {
+            steps {
+                sh ''' 
+                    git config --global --add safe.directory /var/projects/used-cars-price-predictor 
+                    cd /var/projects/used-cars-price-predictor
+                    git pull
+                    docker compose up -d --build
+                '''
+            }
+        }
+    }
+}
