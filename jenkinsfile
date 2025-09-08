@@ -15,10 +15,9 @@ pipeline {
         stage('Build Project') {
             steps {
                 sh ''' 
-                    git config --global --add safe.directory /var/projects/used-cars-price-predictor 
-                    cd /var/projects/used-cars-price-predictor
-                    git pull
-                    docker compose up -d --build
+                     
+                    cd $WORKSPACE 
+                    docker compose up -d --build --force-recreate
                 '''
             }
         }

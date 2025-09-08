@@ -5,16 +5,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
-      - models_data:/app/models
     depends_on:
       - frontend
     networks:
       - traefik-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.usedcars-backend.rule=Host(`api-used-cars-price.gkibria121.com`)"
+      - "traefik.http.routers.usedcars-backend.rule=Host(`used-cars-price.gkibria121.com`) && PathPrefix(`api`)"
       - "traefik.http.routers.usedcars-backend.entrypoints=web"
       - "traefik.http.services.usedcars-backend.loadbalancer.server.port=8000"
 
@@ -26,7 +23,7 @@ services:
       - traefik-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.usedcars-frontend.rule=Host(`used-cars-price.gkibria121.com`)"
+      - "traefik.http.routers.usedcars-frontend.rule=Host(`used-cars-price.gkibria121.com`) && !PathPrefix(`api`)"
       - "traefik.http.routers.usedcars-frontend.entrypoints=web"
       - "traefik.http.services.usedcars-frontend.loadbalancer.server.port=3000"
 
