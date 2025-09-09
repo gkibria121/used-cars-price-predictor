@@ -5,7 +5,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - models_data:/app/models
-
+    networks:
+      - traefik-network
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.cars-backend.rule=Host(`cars.gkibria121.com`) && PathPrefix(`/api`)"
@@ -15,6 +16,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    networks:
+      - traefik-network
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.cars-frontend.rule=Host(`cars.gkibria121.com`) && !PathPrefix(`/api`)"
