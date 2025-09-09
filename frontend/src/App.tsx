@@ -64,7 +64,7 @@ const App = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     console.log("API URL:", apiUrl);
     try {
-      const response = await fetch(`${apiUrl}/predict`, {
+      const response = await fetch(`${apiUrl}/api/predict`, {
         method: "POST",
         headers: {
           accept: "application/json",
