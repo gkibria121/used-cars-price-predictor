@@ -25,7 +25,7 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "http://localhost:5173", 
-    "https://used-cars-price-predictor.gkibria121.com"
+    "https://used-cars-price.gkibria121.com"
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -34,11 +34,11 @@ app.add_middleware(
     allow_methods=["*"],         
     allow_headers=["*"],
 )
-@app.get("/")
+@app.get("/api")
 def root():
     return {"message": "Car Price Prediction API is running"}
 
-@app.post("/predict")
+@app.post("/api/predict")
 def predict(features: CarFeatures):
  
     data_new = pd.DataFrame([features.dict()])
